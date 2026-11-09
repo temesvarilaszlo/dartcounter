@@ -2,7 +2,7 @@
 
 A personal, mobile-first dart scorer for X01 and Cricket. It runs as an installable, offline-capable PWA on Android Chrome. Vanilla JavaScript (ES modules), no build step, no runtime dependencies. See [PLAN.md](PLAN.md) for the full design.
 
-**Status:** milestone 0 (scaffold) done: app shell, routing, placeholder screens, service worker, icons.
+**Status:** milestones 0-1 done: app shell, routing, service worker, icons; model core (match format, players, registry, `GameSession`) and the full X01 model (rules, checkout engine, replay, stats).
 
 ## Development
 

@@ -7,3 +7,5 @@ export const STORAGE_KEYS = {
 
 export const DB_NAME = 'dartcounter';
 export const DB_VERSION = 1;
+
+export const SCHEMA_VERSION = 1;
