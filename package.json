@@ -1,0 +1,21 @@
+{
+  "name": "dartcounter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.8"
+  },
+  "packageManager": "pnpm@12.18.0",
+  "scripts": {
+    "dev": "pnpm precache && http-server . -a 0.0.0.0 -p 8080 -c-1",
+    "precache": "node scripts/gen-precache.mjs",
+    "icons": "node scripts/gen-icons.mjs",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/model/**/*.js\" --test-coverage-lines=90 --test-coverage-branches=90 --test-coverage-functions=90 \"tests/**/*.test.js\""
+  },
+  "devDependencies": {
+    "fake-indexeddb": "6.2.8",
+    "http-server": "14.1.1"
+  }
+}

@@ -1,0 +1,19 @@
+services:
+  app:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+      - cache:/cache
+    environment:
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+      COREPACK_HOME: /cache/corepack
+    ports:
+      - "8080:8080"
+    entrypoint: ["sh", "-c", "corepack enable && exec \"$@\"", "--"]
+    command: ["sh", "-c", "pnpm install && pnpm dev"]
+
+volumes:
+  node_modules:
+  cache:

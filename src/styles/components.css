@@ -1,0 +1,81 @@
+/* Navbar: its top edge is a strip of the board's double ring. */
+#navbar {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding: 0 var(--safe-right) var(--safe-bottom) var(--safe-left);
+  background: var(--board-ink);
+}
+
+#navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, var(--board-red) 0 5%, var(--board-green) 5% 10%);
+}
+
+.navbar__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: var(--navbar-height);
+  padding-top: 4px;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.navbar__icon svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+}
+
+.navbar__item[aria-current='page'] {
+  color: var(--board-white);
+  font-weight: 700;
+}
+
+.navbar__item[aria-current='page'] .navbar__label {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Buttons: green confirms, red destroys; both always carry a text label. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding: 0 var(--space-6);
+  border: 2px solid var(--board-line);
+  border-radius: var(--radius-sm);
+  background: var(--board-ink);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:active {
+  transform: translateY(1px);
+  filter: brightness(1.15);
+}
+
+.btn--primary {
+  border-color: var(--board-green);
+  background: var(--board-green);
+}
+
+.btn--danger {
+  border-color: var(--board-red);
+  background: var(--board-red);
+}
