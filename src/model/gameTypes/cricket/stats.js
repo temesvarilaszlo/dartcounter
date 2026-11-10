@@ -37,3 +37,31 @@ export const gameStatsRows = [
   { key: 'marks', label: 'Total marks', format: 'integer' },
   { key: 'points', label: 'Total points', format: 'integer' },
 ];
+
+export function allTimeStats(games, playerId) {
+  return summarizeLegs(games.flatMap((game) => {
+    const seat = game.config.playerIds.indexOf(playerId);
+    return game.legs.map((leg) => legStats(game.config, leg)[seat]);
+  }));
+}
+
+export const allTime = {
+  highlights: [
+    { key: 'gamesPlayed', label: 'Games played', format: 'integer' },
+    { key: 'gamesWon', label: 'Games won', format: 'integer' },
+    { key: 'mpr', label: 'MPR', format: 'decimal' },
+  ],
+  sections: [
+    {
+      key: 'totals',
+      label: 'Totals',
+      kind: 'rows',
+      rows: [
+        { key: 'marks', label: 'Total marks', format: 'integer' },
+        { key: 'points', label: 'Total points', format: 'integer' },
+        { key: 'darts', label: 'Darts thrown', format: 'integer' },
+      ],
+    },
+  ],
+  compute: allTimeStats,
+};

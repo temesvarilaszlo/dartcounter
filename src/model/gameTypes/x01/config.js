@@ -49,3 +49,10 @@ export function describeConfig({ typeConfig }) {
   parts.push(OUT_RULES[typeConfig.outRule].label);
   return parts.join(' · ');
 }
+
+// Type specific history filters; options come from the values actually played.
+export const filterFields = [
+  { key: 'startScore', label: 'Start score', optionLabel: String },
+  { key: 'inRule', label: 'In', optionLabel: (value) => IN_RULES[value].label },
+  { key: 'outRule', label: 'Out', optionLabel: (value) => OUT_RULES[value].label },
+];

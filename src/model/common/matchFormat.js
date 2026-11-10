@@ -1,4 +1,5 @@
 export const FORMAT_MODES = ['firstTo', 'bestOf'];
+export const FORMAT_MODE_LABELS = { firstTo: 'First to', bestOf: 'Best of' };
 
 export function winsNeeded({ mode, value }) {
   return mode === 'bestOf' ? (value + 1) / 2 : value;

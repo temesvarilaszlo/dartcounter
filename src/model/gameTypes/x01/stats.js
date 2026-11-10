@@ -76,3 +76,57 @@ export const gameStatsRows = [
   { key: 'bestLeg', label: 'Best leg', format: 'darts' },
   { key: 'worstLeg', label: 'Worst leg', format: 'darts' },
 ];
+
+// One player's legs across the given games (every game must include the player).
+function playerLegs(games, playerId) {
+  return games.map((game) => {
+    const seat = game.config.playerIds.indexOf(playerId);
+    return { game, legs: game.legs.map((leg) => legStats(game.config, leg)[seat]) };
+  });
+}
+
+// Leg length depends on the start score, so best/worst leg is listed per start
+// score the player has played.
+function legsByStartScore(perGame) {
+  const byStart = new Map();
+  for (const { game, legs } of perGame) {
+    const start = game.config.typeConfig.startScore;
+    byStart.set(start, [...(byStart.get(start) ?? []), ...legs]);
+  }
+  return [...byStart]
+    .sort(([a], [b]) => a - b)
+    .map(([startScore, legs]) => {
+      const { bestLeg, worstLeg } = summarizeLegs(legs);
+      return { startScore, bestLeg, worstLeg };
+    });
+}
+
+export function allTimeStats(games, playerId) {
+  const perGame = playerLegs(games, playerId);
+  const { bestLeg, worstLeg, ...summary } = summarizeLegs(perGame.flatMap((g) => g.legs));
+  return { ...summary, count180: summary.buckets['180'], legsByStartScore: legsByStartScore(perGame) };
+}
+
+// Describes the all-time screen; gamesPlayed/gamesWon come from statsService.
+export const allTime = {
+  highlights: [
+    { key: 'count180', label: '180s', format: 'integer' },
+    { key: 'average', label: 'Average', format: 'decimal' },
+    { key: 'darts', label: 'Darts thrown', format: 'integer' },
+    { key: 'gamesPlayed', label: 'Games played', format: 'integer' },
+  ],
+  sections: [
+    { key: 'buckets', label: 'Scores', kind: 'buckets', buckets: SCORE_BUCKETS.map(({ key }) => ({ key, label: key })) },
+    {
+      key: 'records',
+      label: 'Records',
+      kind: 'rows',
+      rows: [
+        { key: 'highestFinish', label: 'Highest finish', format: 'integer' },
+        { key: 'highestScore', label: 'Highest score', format: 'integer' },
+      ],
+    },
+    { key: 'legsByStartScore', label: 'Best and worst leg', kind: 'legsByStartScore' },
+  ],
+  compute: allTimeStats,
+};

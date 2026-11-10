@@ -1,4 +1,5 @@
 import { SCHEMA_VERSION } from '../../config.js';
+import { localDay } from '../common/dates.js';
 
 const APP = 'dartcounter';
 const NOT_A_BACKUP = 'This file is not a Dart Counter backup';
@@ -9,8 +10,7 @@ export function buildExport({ players, games, now }) {
 
 // Named after the phone's local date.
 export function exportFileName(date) {
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${APP}-${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}.json`;
+  return `${APP}-${localDay(date)}.json`;
 }
 
 const isString = (value) => typeof value === 'string' && value.length > 0;

@@ -17,3 +17,7 @@ export const validateConfig = (config) => validateGameConfig(config, preGameSche
 export const normalizeConfig = (raw) => normalizeFields(preGameSchema, raw);
 
 export const describeConfig = ({ typeConfig }) => VARIANTS[typeConfig.variant].label;
+
+export const filterFields = [
+  { key: 'variant', label: 'Variant', optionLabel: (value) => VARIANTS[value].label },
+];
