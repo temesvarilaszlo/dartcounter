@@ -1,7 +1,7 @@
 import { MAX_PLAYERS } from '../config.js';
 import { FORMAT_MODES, FORMAT_MODE_LABELS, stepFormat, switchFormatMode } from '../model/common/matchFormat.js';
 import { randomId } from '../model/common/ids.js';
-import { movePlayer, prepareGame, restoreForm, suggestPlayers, validateForm } from '../model/preGame.js';
+import { movePlayer, prepareGame, rematchForm, restoreForm, suggestPlayers, validateForm } from '../model/preGame.js';
 import { renderPreGame } from '../views/screens/preGameView.js';
 import { openKeypadModal } from '../views/components/keypad.js';
 import { openModal } from '../views/components/modal.js';
@@ -34,7 +34,7 @@ export class PreGameController {
     this.ctx = ctx;
   }
 
-  async show({ params }) {
+  async show({ params, query }) {
     const { registry, viewParts, lastConfig, repos } = this.ctx;
     if (!registry.has(params.typeId) || !viewParts[params.typeId]) {
       this.ctx.navigate('#/');
@@ -42,7 +42,13 @@ export class PreGameController {
     }
     const token = (this.token = {});
     this.type = registry.get(params.typeId);
-    this.form = restoreForm(this.type, lastConfig.get(this.type.id));
+    let rematch = null;
+    if (query.rematch) {
+      const [game, players] = await Promise.all([repos.games.get(query.rematch), repos.players.list()]);
+      if (this.token !== token) return;
+      if (game?.type === this.type.id) rematch = rematchForm(this.type, game, players);
+    }
+    this.form = rematch ?? restoreForm(this.type, lastConfig.get(this.type.id));
     this.touched = new Set();
     this.existing = [];
     this.render();

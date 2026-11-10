@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SCORE_BUCKETS, gameStats, legStats, summarizeLegs } from '../../../../src/model/gameTypes/x01/stats.js';
+import {
+  SCORE_BUCKETS, gameStats, legHistory, legStats, summarizeLegs,
+} from '../../../../src/model/gameTypes/x01/stats.js';
 import { countBuckets } from '../../../../src/model/common/statsMath.js';
 import { x01Config } from '../../../fixtures/x01.js';
 
@@ -104,4 +106,20 @@ test('scoreboard: live per-seat numbers of the current leg', async () => {
   ]);
   play(session, [100]);
   assert.equal(scoreboard(session.state)[0].lastScore, 100);
+});
+
+test('legHistory: rounds of remaining and scored per player, null once the leg is over', () => {
+  const config = x01Config({ startScore: 301 });
+  const rows = legHistory(config, leg([turn(0, 100), turn(1, 60), turn(0, 140), turn(1, 0), turn(0, 61, 2)]));
+  assert.deepEqual(rows, [
+    [{ score: 100, remaining: 201, darts: 3 }, { score: 60, remaining: 241, darts: 3 }],
+    [{ score: 140, remaining: 61, darts: 3 }, { score: 0, remaining: 241, darts: 3 }],
+    [{ score: 61, remaining: 0, darts: 2 }, null],
+  ]);
+});
+
+test('legHistory follows the throw order when the second seat starts', () => {
+  const rows = legHistory(x01Config({ startScore: 101 }), { ...leg([turn(1, 101)]), starterIndex: 1 });
+  assert.deepEqual(rows, [[null, { score: 101, remaining: 0, darts: 3 }]]);
+  assert.deepEqual(legHistory(x01Config(), leg([])), []);
 });

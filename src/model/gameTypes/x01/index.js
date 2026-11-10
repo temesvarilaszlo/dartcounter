@@ -1,6 +1,8 @@
 import { describeConfig, filterFields, normalizeConfig, preGameSchema, validateConfig } from './config.js';
 import { applyTurn, evaluateInput, replay } from './replay.js';
-import { allTime, gameStats, gameStatsRows, legStats, scoreboard } from './stats.js';
+import {
+  allTime, gameStats, gameStatsRows, legHistory, legStats, legStatsRows, scoreboard,
+} from './stats.js';
 
 export const x01 = {
   id: 'x01',
@@ -15,6 +17,8 @@ export const x01 = {
   evaluateInput,
   applyTurn,
   legStats,
+  legStatsRows,
+  legHistory,
   gameStats,
   gameStatsRows,
   allTime,

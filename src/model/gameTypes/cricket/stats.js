@@ -1,6 +1,6 @@
 import { pooledAverage, sum } from '../../common/statsMath.js';
 import { replayLeg } from './replay.js';
-import { MARKS_TO_CLOSE, NUMBERS } from './rules.js';
+import { MARKS_TO_CLOSE, NUMBERS, createPlayers, throwDart } from './rules.js';
 
 // MPR is pooled like the X01 average: counting marks / darts x 3.
 const mpr = (marks, darts) => pooledAverage(marks, darts);
@@ -38,6 +38,27 @@ export const gameStatsRows = [
   { key: 'marks', label: 'Total marks', format: 'integer' },
   { key: 'points', label: 'Total points', format: 'integer' },
 ];
+
+export const legStatsRows = [
+  { key: 'mpr', label: 'MPR', format: 'decimal' },
+  { key: 'marks', label: 'Marks', format: 'integer' },
+  { key: 'points', label: 'Points', format: 'integer' },
+];
+
+// Rounds of a leg: rows[round][seat] = { darts, marks, points } or null. `marks`
+// are the counting marks of that turn, `points` the player's total after it.
+export function legHistory(config, leg) {
+  const players = createPlayers(config.playerIds.length);
+  const bySeat = config.playerIds.map(() => []);
+  for (const turn of leg.turns) {
+    const player = players[turn.playerIndex];
+    const marksBefore = player.countingMarks;
+    turn.darts.forEach((dart) => throwDart(players, turn.playerIndex, dart, config.typeConfig.variant));
+    bySeat[turn.playerIndex].push({ darts: turn.darts, marks: player.countingMarks - marksBefore, points: player.points });
+  }
+  const rounds = Math.max(0, ...bySeat.map((turns) => turns.length));
+  return Array.from({ length: rounds }, (_, round) => bySeat.map((turns) => turns[round] ?? null));
+}
 
 export function allTimeStats(games, playerId) {
   return summarizeLegs(games.flatMap((game) => {

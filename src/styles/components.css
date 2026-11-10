@@ -61,7 +61,9 @@
   border: 2px solid var(--board-line);
   border-radius: var(--radius-sm);
   background: var(--board-ink);
+  color: var(--board-white);
   font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -176,6 +178,24 @@
   font-family: var(--font-display);
   font-size: var(--text-lg);
   font-variant-numeric: tabular-nums;
+}
+
+.modal__actions:empty {
+  display: none;
+}
+
+/* Bottom sheet: pinned to the bottom edge, scrolls inside. */
+.modal--sheet {
+  width: 100%;
+  max-width: 40rem;
+  max-height: 85dvh;
+  margin: auto auto 0;
+  padding-bottom: calc(var(--space-4) + var(--safe-bottom));
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.modal--sheet .modal__body {
+  color: var(--board-white);
 }
 
 .modal--keypad .keypad {

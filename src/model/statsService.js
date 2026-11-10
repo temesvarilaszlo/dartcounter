@@ -1,4 +1,4 @@
-import { localDay } from './common/dates.js';
+import { daysBefore, localDay } from './common/dates.js';
 import { FORMAT_MODE_LABELS } from './common/matchFormat.js';
 
 // All-time statistics and history filters over finished game records. Data is
@@ -45,6 +45,17 @@ function matches(game, f) {
 export function filterGames(games, filters) {
   const f = { ...emptyFilters(), ...filters };
   return games.filter((game) => matches(game, f));
+}
+
+// Quick date ranges for the filter sheet, ending today (local days).
+export function datePresets(now) {
+  const today = localDay(now);
+  return [
+    { key: 'today', label: 'Today', dateFrom: today, dateTo: today },
+    { key: 'week', label: 'Last 7 days', dateFrom: daysBefore(now, 6), dateTo: today },
+    { key: 'month', label: 'Last 30 days', dateFrom: daysBefore(now, 29), dateTo: today },
+    { key: 'year', label: 'This year', dateFrom: `${today.slice(0, 4)}-01-01`, dateTo: today },
+  ];
 }
 
 // Badge on the filter button: one per active filter group.

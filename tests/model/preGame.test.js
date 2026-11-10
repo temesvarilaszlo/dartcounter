@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { defaultForm, movePlayer, prepareGame, restoreForm, suggestPlayers, validateForm } from '../../src/model/preGame.js';
+import {
+  defaultForm, movePlayer, prepareGame, rematchForm, restoreForm, suggestPlayers, validateForm,
+} from '../../src/model/preGame.js';
 import { createLastConfigStore } from '../../src/model/persistence/activeGameStore.js';
 import { x01 } from '../../src/model/gameTypes/x01/index.js';
 import { cricket } from '../../src/model/gameTypes/cricket/index.js';
@@ -99,4 +101,24 @@ test('moving players swaps neighbours and ignores moves past the ends', () => {
 test('suggestions leave out players already in the form, sorted by name', () => {
   const existing = [player('c', 'Carol'), player('a', 'Alice'), player('b', 'Bob')];
   assert.deepEqual(suggestPlayers(existing, withPlayers(x01, 'bob', '')).map((p) => p.name), ['Alice', 'Carol']);
+});
+
+test('rematch: same setup with the player order rotated by one', () => {
+  const alice = player('a', 'Alice');
+  const bob = player('b', 'Bob');
+  const carol = player('c', 'Carol');
+  const game = {
+    config: {
+      playerIds: ['a', 'b', 'c'],
+      startingPlayerIndex: 0,
+      sets: { enabled: true, format: { mode: 'bestOf', value: 3 }, legsToWinSet: 2 },
+      legs: { format: { mode: 'firstTo', value: 1 } },
+      typeConfig: { startScore: 777, inRule: 'double', outRule: 'straight' },
+    },
+  };
+  const form = rematchForm(x01, game, [carol, alice, bob]);
+  assert.deepEqual(form.players, named('Bob', 'Carol', 'Alice').slice(0, form.players.length));
+  assert.deepEqual(form.sets, game.config.sets);
+  assert.deepEqual(form.typeConfig, game.config.typeConfig);
+  assert.deepEqual(rematchForm(x01, { config: { ...game.config, playerIds: ['a', 'b'] } }, [alice, bob]).players, named('Bob', 'Alice'));
 });

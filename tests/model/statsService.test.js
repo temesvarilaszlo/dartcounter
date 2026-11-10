@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  activeFilterCount, allTimeStats, emptyFilters, filterGames, filterOptions, rankPlayers,
+  activeFilterCount, allTimeStats, datePresets, emptyFilters, filterGames, filterOptions, rankPlayers,
 } from '../../src/model/statsService.js';
 import { GameSession } from '../../src/model/session.js';
 import { createRegistry } from '../../src/model/gameTypes/registry.js';
@@ -180,4 +180,17 @@ test('type specific filter options with labels', () => {
   assert.deepEqual(filterOptions(GAMES, [], registry, 'cricket').typeFields, [
     { key: 'variant', label: 'Variant', options: [{ value: 'regular', label: 'Regular' }] },
   ]);
+});
+
+test('date presets end today and start on the right local day', () => {
+  const presets = datePresets(new Date(2026, 10, 10, 9, 30));
+  assert.deepEqual(presets.map(({ key, dateFrom, dateTo }) => [key, dateFrom, dateTo]), [
+    ['today', '2026-11-10', '2026-11-10'],
+    ['week', '2026-11-04', '2026-11-10'],
+    ['month', '2026-10-12', '2026-11-10'],
+    ['year', '2026-01-01', '2026-11-10'],
+  ]);
+  const range = ({ dateFrom, dateTo }) => only({ dateFrom, dateTo });
+  assert.deepEqual(range(presets[0]), ['cricket']);
+  assert.deepEqual(range(presets[1]), ids(GAMES));
 });

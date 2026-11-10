@@ -77,6 +77,26 @@ export const gameStatsRows = [
   { key: 'worstLeg', label: 'Worst leg', format: 'darts' },
 ];
 
+// Per-player numbers in the header of a leg on the game detail screen.
+export const legStatsRows = [
+  { key: 'average', label: '3-dart avg', format: 'decimal' },
+  { key: 'first9Average', label: 'First 9 avg', format: 'decimal' },
+  { key: 'darts', label: 'Darts', format: 'integer' },
+];
+
+// Score history by round: rows[round][seat] = { score, remaining, darts } or
+// null when the player did not throw in that round (the leg ended first).
+export function legHistory(config, leg) {
+  const remaining = config.playerIds.map(() => config.typeConfig.startScore);
+  const bySeat = config.playerIds.map(() => []);
+  for (const { playerIndex, score, darts } of leg.turns) {
+    remaining[playerIndex] -= score;
+    bySeat[playerIndex].push({ score, remaining: remaining[playerIndex], darts });
+  }
+  const rounds = Math.max(0, ...bySeat.map((turns) => turns.length));
+  return Array.from({ length: rounds }, (_, round) => bySeat.map((turns) => turns[round] ?? null));
+}
+
 // One player's legs across the given games (every game must include the player).
 function playerLegs(games, playerId) {
   return games.map((game) => {

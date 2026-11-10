@@ -1,7 +1,9 @@
 import { MAX_PLAYERS } from '../config.js';
 import { normalizeFields, validateCommonConfig, validateFields } from './common/gameConfig.js';
 import { formatError } from './common/matchFormat.js';
-import { nameKey, normalizeName, resolvePlayers, validatePlayerNames } from './common/players.js';
+import {
+  nameKey, normalizeName, resolvePlayers, rotateOrder, validatePlayerNames,
+} from './common/players.js';
 
 // The pre-game form: { players: [{ name }], sets, legs, typeConfig }. Players
 // are kept by name and resolved to records only when the game starts.
@@ -78,4 +80,12 @@ export function movePlayer(players, index, delta) {
 export function suggestPlayers(existingPlayers, form) {
   const taken = new Set(form.players.map((p) => nameKey(p.name)));
   return existingPlayers.filter((p) => !taken.has(p.nameKey)).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+// Rematch: same setup, the next player in the list throws first. `players` are
+// the game's player records (names are looked up by id).
+export function rematchForm(type, game, players) {
+  const names = game.config.playerIds.map((id) => ({ name: players.find((p) => p.id === id)?.name ?? '' }));
+  const { sets, legs, typeConfig } = game.config;
+  return restoreForm(type, { players: rotateOrder(names), sets, legs, typeConfig });
 }

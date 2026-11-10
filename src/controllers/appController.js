@@ -1,10 +1,10 @@
 import { renderNavbar } from '../views/components/navbar.js';
 import { closeAllModals } from '../views/components/modal.js';
-import { renderGameDetail } from '../views/screens/gameDetailView.js';
-import { renderStats } from '../views/screens/statsView.js';
 import { MenuController } from './menuController.js';
 import { PreGameController } from './preGameController.js';
 import { GameController } from './gameController.js';
+import { GameDetailController } from './gameDetailController.js';
+import { StatsController } from './statsController.js';
 
 const NAV_SECTION = { menu: 'menu', preGame: 'menu', game: 'menu', gameDetail: 'stats', stats: 'stats' };
 
@@ -16,8 +16,8 @@ export class AppController {
       menu: new MenuController(ctx),
       preGame: new PreGameController(ctx),
       game: new GameController(ctx),
-      gameDetail: { show: ({ params }) => renderGameDetail(ctx.root, params) },
-      stats: { show: ({ query }) => renderStats(ctx.root, query) },
+      gameDetail: new GameDetailController(ctx),
+      stats: new StatsController(ctx),
     };
   }
 

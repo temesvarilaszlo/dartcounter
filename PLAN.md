@@ -333,6 +333,8 @@ Each game type is one module exporting an object with this shape. Adding a game 
   legStats(config, leg) -> object,
   gameStats(config, legs) -> { [playerIndex]: object },
   gameStatsRows: [ { key, label, format } ],         // rows of the Game detail table
+  legStatsRows: [ { key, label, format } ],          // per-player numbers in a leg's accordion header
+  legHistory(config, leg) -> rows[round][seat],      // score history of one leg (null once the leg is over)
   allTime: { highlights: [...], sections: [...], compute(games, playerId) -> object },
   filterFields: [ ... ]                              // type specific history filters
 }

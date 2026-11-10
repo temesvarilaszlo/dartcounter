@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { gameStats, gameStatsRows, legStats, summarizeLegs } from '../../../../src/model/gameTypes/cricket/stats.js';
+import {
+  gameStats, gameStatsRows, legHistory, legStats, summarizeLegs,
+} from '../../../../src/model/gameTypes/cricket/stats.js';
 import { cricketConfig, darts } from '../../../fixtures/cricket.js';
 
 const leg = (turns) => ({
@@ -64,4 +66,18 @@ test('scoreboard and board: live marks, points, MPR, dead numbers and pending da
   assert.deepEqual(view.numbers.map((x) => x.n), [20, 19, 18, 17, 16, 15, 25]);
   assert.deepEqual(view.numbers.filter((x) => x.dead).map((x) => x.n), [20]);
   assert.deepEqual(view.pendingDarts, [{ n: 20, m: 1 }]);
+});
+
+test('legHistory: darts, counting marks and running points per round', () => {
+  const rows = legHistory(cricketConfig(), leg(['T20 T20 M', 'S20 M M', 'T20 M M', 'D20 S20 M']));
+  assert.deepEqual(rows.map((round) => round.map((cell) => [cell.marks, cell.points])), [
+    [[6, 60], [1, 0]],
+    [[3, 120], [2, 0]],
+  ]);
+  assert.deepEqual(rows[0][0].darts, darts('T20 T20 M'));
+});
+
+test('legHistory: cut-throat points land on the opponent; unplayed seats are null', () => {
+  const rows = legHistory(cricketConfig({ variant: 'cutThroat' }), leg(['T20 T20 M', 'M M M', 'D25 S25 M']));
+  assert.deepEqual(rows.map((round) => round.map((cell) => cell && cell.points)), [[0, 60], [0, null]]);
 });

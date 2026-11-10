@@ -45,3 +45,24 @@ export function inputPanel({ canUndo }, handlers) {
     keypad({ onDigit: handlers.onDigit, onBackspace: handlers.onBackspace, onOk: handlers.onOk }));
   return { element, setEntry: display.set };
 }
+
+// Score history of one leg: per player Scored and Left, one row per round.
+export function legHistoryTable(history, names) {
+  return el('table', { class: 'history' },
+    el('thead', {},
+      el('tr', {},
+        el('th', { scope: 'col', rowspan: '2', class: 'history__round' }, el('span', { class: 'visually-hidden' }, 'Round')),
+        names.map((name) => el('th', { scope: 'colgroup', colspan: '2', class: 'history__player' }, name))),
+      el('tr', {}, names.map(() => [el('th', { scope: 'col' }, 'Scored'), el('th', { scope: 'col' }, 'Left')]))),
+    el('tbody', {}, history.map((round, r) => el('tr', {},
+      el('th', { scope: 'row', class: 'history__round' }, String(r + 1)),
+      round.map((cell) => {
+        if (!cell) return [el('td', { class: 'history__group' }), el('td', {})];
+        const checkout = cell.remaining === 0;
+        return [
+          el('td', { class: 'history__group' }, String(cell.score),
+            checkout && cell.darts < 3 ? el('span', { class: 'history__note' }, plural(cell.darts, 'dart')) : null),
+          el('td', { 'data-checkout': checkout ? '' : null }, checkout ? 'Out' : String(cell.remaining)),
+        ];
+      })))));
+}

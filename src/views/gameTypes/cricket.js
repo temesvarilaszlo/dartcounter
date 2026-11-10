@@ -92,3 +92,25 @@ export function inputPanel({ canUndo, multiplier, board }, handlers) {
       el('button', { class: 'pad__key pad__key--next', type: 'button', onClick: handlers.onNextPlayer }, 'Next player')));
   return { element };
 }
+
+const historyDart = (dart) => (dart.miss ? '–' : dartLabel(dart));
+
+// One leg by round: per player the darts thrown (with the marks they counted)
+// and the player's points after the turn.
+export function legHistoryTable(history, names) {
+  return el('table', { class: 'history history--cricket' },
+    el('thead', {},
+      el('tr', {},
+        el('th', { scope: 'col', rowspan: '2', class: 'history__round' }, el('span', { class: 'visually-hidden' }, 'Round')),
+        names.map((name) => el('th', { scope: 'colgroup', colspan: '2', class: 'history__player' }, name))),
+      el('tr', {}, names.map(() => [el('th', { scope: 'col' }, 'Hit'), el('th', { scope: 'col' }, 'Pts')]))),
+    el('tbody', {}, history.map((round, r) => el('tr', {},
+      el('th', { scope: 'row', class: 'history__round' }, String(r + 1)),
+      round.map((cell) => (cell
+        ? [
+          el('td', { class: 'history__group history__darts' }, cell.darts.map(historyDart).join(' '),
+            el('span', { class: 'history__note' }, plural(cell.marks, 'mark'))),
+          el('td', {}, String(cell.points)),
+        ]
+        : [el('td', { class: 'history__group' }), el('td', {})]))))));
+}
