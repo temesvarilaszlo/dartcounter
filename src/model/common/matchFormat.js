@@ -5,6 +5,27 @@ export function winsNeeded({ mode, value }) {
   return mode === 'bestOf' ? (value + 1) / 2 : value;
 }
 
+export const FORMAT_MAX = 21;
+
+// Stepper: best-of moves through odd values only. Returns the same object when
+// the step would leave 1..max, so callers can tell the end was reached.
+export function stepFormat(format, direction, max = FORMAT_MAX) {
+  const value = format.value + direction * (format.mode === 'bestOf' ? 2 : 1);
+  return value < 1 || value > max ? format : { ...format, value };
+}
+
+// Switching mode keeps the wins needed: first to 3 <-> best of 5.
+export function switchFormatMode(format, mode) {
+  if (mode === format.mode) return format;
+  const wins = winsNeeded(format);
+  return { mode, value: mode === 'bestOf' ? wins * 2 - 1 : wins };
+}
+
+// "First to 3 legs", "Best of 1 set"
+export function describeFormat(format, unit) {
+  return `${FORMAT_MODE_LABELS[format.mode]} ${format.value} ${unit}${format.value === 1 ? '' : 's'}`;
+}
+
 export function formatError(format) {
   if (!format || !FORMAT_MODES.includes(format.mode)) return 'Choose first to or best of';
   if (!Number.isInteger(format.value) || format.value < 1) return 'Must be at least 1';

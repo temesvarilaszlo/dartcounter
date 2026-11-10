@@ -284,8 +284,9 @@ IndexedDB layout (DB `dartcounter`, version 1):
 Key `dartcounter.activeGame.v1`:
 
 ```js
-{ schemaVersion: 1, savedAt, type, config, legs: [ ...same shape as above, last leg may be incomplete ],
-  pendingTurn: null | { /* partial cricket turn */ } }
+{ schemaVersion: 1, savedAt, type, startedAt, config, legs: [ ...same shape as above, last leg may be incomplete ],
+  pendingTurn: null | { /* partial cricket turn */ },
+  players: [ /* player records in seat order, incl. new ones not yet in the DB */ ] }
 ```
 
 - Written after every committed turn, undo and dart (cricket).

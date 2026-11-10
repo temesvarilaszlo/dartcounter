@@ -87,3 +87,28 @@ test('no legs played yet', () => {
   assert.deepEqual(progress.legs, []);
   assert.deepEqual(progress.next, { setIndex: 0, legIndexInSet: 0, starterIndex: 0 });
 });
+
+test('stepper: first-to moves by 1, best-of by 2 through odd values, within 1..max', async () => {
+  const { stepFormat, FORMAT_MAX } = await import('../../../src/model/common/matchFormat.js');
+  assert.deepEqual(stepFormat({ mode: 'firstTo', value: 3 }, 1), { mode: 'firstTo', value: 4 });
+  assert.deepEqual(stepFormat({ mode: 'bestOf', value: 3 }, -1), { mode: 'bestOf', value: 1 });
+  const one = { mode: 'bestOf', value: 1 };
+  assert.equal(stepFormat(one, -1), one);
+  const top = { mode: 'firstTo', value: FORMAT_MAX };
+  assert.equal(stepFormat(top, 1), top);
+  assert.deepEqual(stepFormat({ mode: 'firstTo', value: 2 }, 1, 2), { mode: 'firstTo', value: 2 });
+});
+
+test('switching mode keeps the wins needed', async () => {
+  const { switchFormatMode } = await import('../../../src/model/common/matchFormat.js');
+  assert.deepEqual(switchFormatMode({ mode: 'firstTo', value: 3 }, 'bestOf'), { mode: 'bestOf', value: 5 });
+  assert.deepEqual(switchFormatMode({ mode: 'bestOf', value: 5 }, 'firstTo'), { mode: 'firstTo', value: 3 });
+  const same = { mode: 'firstTo', value: 1 };
+  assert.equal(switchFormatMode(same, 'firstTo'), same);
+});
+
+test('describeFormat pluralises the unit', async () => {
+  const { describeFormat } = await import('../../../src/model/common/matchFormat.js');
+  assert.equal(describeFormat({ mode: 'firstTo', value: 3 }, 'leg'), 'First to 3 legs');
+  assert.equal(describeFormat({ mode: 'bestOf', value: 1 }, 'set'), 'Best of 1 set');
+});

@@ -13,7 +13,7 @@
   position: absolute;
   inset: 0 0 auto;
   height: 4px;
-  background: repeating-linear-gradient(90deg, var(--board-red) 0 5%, var(--board-green) 5% 10%);
+  background: var(--ring-strip);
 }
 
 .navbar__item {
@@ -78,4 +78,330 @@
 .btn--danger {
   border-color: var(--board-red);
   background: var(--board-red);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+.btn--quiet {
+  border-color: var(--board-line);
+  background: transparent;
+}
+
+.btn--wide {
+  width: 100%;
+}
+
+.btn__icon svg,
+.icon-btn svg,
+.keypad__key--back svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: 1px solid var(--board-line);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+}
+
+.icon-btn:disabled {
+  opacity: 0.3;
+}
+
+/* Modal: a raised ink card on a dimmed board, low on the screen where the thumb is. */
+.modal {
+  margin: auto auto max(var(--space-4), var(--safe-bottom));
+  width: min(100% - 2 * var(--space-4), 26rem);
+  max-height: calc(100dvh - 2 * var(--space-4));
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  border: 1px solid var(--board-line);
+  border-radius: var(--radius-md);
+  background: var(--board-ink);
+  color: var(--board-white);
+  overflow: auto;
+}
+
+.modal::backdrop {
+  background: rgb(0 0 0 / 0.72);
+}
+
+.modal__title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: 1.1;
+}
+
+.modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  color: var(--text-muted);
+}
+
+.modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+.modal__actions .btn {
+  flex: 1 1 0;
+  padding: 0 var(--space-3);
+}
+
+.modal--checkout .modal__actions .btn--quiet {
+  flex-basis: 100%;
+}
+
+.modal--summary .modal__body p:first-child {
+  color: var(--board-white);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+.modal--keypad .keypad {
+  margin-top: var(--space-3);
+}
+
+.toast {
+  position: fixed;
+  inset: auto var(--space-4) calc(var(--navbar-height) + var(--safe-bottom) + var(--space-4));
+  z-index: 10;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--board-wire);
+  border-radius: var(--radius-sm);
+  background: var(--board-ink);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+.toast[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Keypad: keys are cells divided by thin wire, like the board's spider. */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  border: 1px solid var(--board-wire);
+  border-radius: var(--radius-sm);
+  background: var(--board-wire);
+  overflow: hidden;
+}
+
+.keypad__key {
+  display: grid;
+  place-items: center;
+  height: var(--key-height);
+  border: 0;
+  background: var(--board-black);
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4.2dvh, 2.2rem);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.keypad__key:active {
+  background: var(--board-line);
+}
+
+.keypad__key--ok {
+  background: var(--board-green);
+}
+
+.keypad__key--ok:active {
+  background: #0b6230;
+}
+
+.keypad__key--back svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* Entry: the typed value, a div so no native keyboard ever opens. */
+.entry {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+.entry__value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: var(--key-height);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--board-line);
+  border-radius: var(--radius-sm);
+  background: var(--board-ink);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5.5dvh, 3rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.entry__value[data-empty] {
+  color: var(--text-muted);
+  font-size: var(--text-lg);
+}
+
+.entry__error {
+  min-height: 1.5em;
+  color: #ff8a8f; /* red tint readable on black (6.9:1), with the text itself as the signal */
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.entry__error:empty::before {
+  content: '\00a0';
+}
+
+/* Form controls */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field__label {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.field__error {
+  color: #ff8a8f;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.segmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.segmented__option,
+.chip {
+  min-height: var(--touch-min);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--board-line);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.segmented__option[aria-pressed='true'] {
+  border: 2px solid var(--board-white);
+  background: var(--board-ink);
+  color: var(--board-white);
+  font-weight: 700;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chips:empty {
+  display: none;
+}
+
+.chip {
+  border-style: dashed;
+  color: var(--board-white);
+}
+
+.stepper {
+  display: inline-grid;
+  grid-template-columns: var(--touch-min) minmax(7rem, auto) var(--touch-min);
+  align-items: center;
+  border: 1px solid var(--board-line);
+  border-radius: var(--radius-sm);
+  width: max-content;
+}
+
+.stepper__btn {
+  height: var(--touch-min);
+  border: 0;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  cursor: pointer;
+}
+
+.stepper__btn:disabled {
+  opacity: 0.3;
+}
+
+.stepper__value {
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-min);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.toggle__track {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border: 2px solid var(--board-wire);
+  border-radius: 13px;
+}
+
+.toggle__track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--board-wire);
+  transition: transform 0.15s;
+}
+
+.toggle[aria-checked='true'] .toggle__track {
+  border-color: var(--board-green);
+  background: var(--board-green);
+}
+
+.toggle[aria-checked='true'] .toggle__track::after {
+  background: var(--board-white);
+  transform: translateX(18px);
 }

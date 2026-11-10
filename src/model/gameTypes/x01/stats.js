@@ -130,3 +130,14 @@ export const allTime = {
   ],
   compute: allTimeStats,
 };
+
+// Live per-seat numbers for the game screen (current leg).
+export function scoreboard(state) {
+  return state.leg.players.map((p) => ({
+    remaining: p.remaining,
+    isIn: p.isIn,
+    darts: p.darts,
+    average: pooledAverage(p.points, p.darts),
+    lastScore: p.lastScore,
+  }));
+}

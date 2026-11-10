@@ -92,3 +92,16 @@ test('score buckets: every boundary lands in the right bucket', () => {
     '0-19': 2,
   });
 });
+
+test('scoreboard: live per-seat numbers of the current leg', async () => {
+  const { scoreboard } = await import('../../../../src/model/gameTypes/x01/stats.js');
+  const { newX01Session, play } = await import('../../../fixtures/x01.js');
+  const session = newX01Session({ inRule: 'double' });
+  play(session, [0, 60]);
+  assert.deepEqual(scoreboard(session.state), [
+    { remaining: 501, isIn: false, darts: 3, average: 0, lastScore: 0 },
+    { remaining: 441, isIn: true, darts: 3, average: 60, lastScore: 60 },
+  ]);
+  play(session, [100]);
+  assert.equal(scoreboard(session.state)[0].lastScore, 100);
+});

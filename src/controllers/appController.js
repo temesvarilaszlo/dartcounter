@@ -1,29 +1,33 @@
 import { renderNavbar } from '../views/components/navbar.js';
-import { renderMenu } from '../views/screens/menuView.js';
-import { renderPreGame } from '../views/screens/preGameView.js';
-import { renderGame } from '../views/screens/gameView.js';
+import { closeAllModals } from '../views/components/modal.js';
 import { renderGameDetail } from '../views/screens/gameDetailView.js';
 import { renderStats } from '../views/screens/statsView.js';
+import { MenuController } from './menuController.js';
+import { PreGameController } from './preGameController.js';
+import { GameController } from './gameController.js';
 
 const NAV_SECTION = { menu: 'menu', preGame: 'menu', game: 'menu', gameDetail: 'stats', stats: 'stats' };
 
+// ctx: { root, navbar, registry, viewParts, repos, activeGame, lastConfig, navigate }
 export class AppController {
-  constructor({ root, navbar }) {
-    this.root = root;
-    this.navbar = navbar;
-    this.screens = {
-      menu: () => renderMenu(this.root),
-      preGame: ({ params }) => renderPreGame(this.root, params),
-      game: () => renderGame(this.root, { onExit: () => { window.location.hash = '#/'; } }),
-      gameDetail: ({ params }) => renderGameDetail(this.root, params),
-      stats: ({ query }) => renderStats(this.root, query),
+  constructor(ctx) {
+    this.ctx = ctx;
+    this.controllers = {
+      menu: new MenuController(ctx),
+      preGame: new PreGameController(ctx),
+      game: new GameController(ctx),
+      gameDetail: { show: ({ params }) => renderGameDetail(ctx.root, params) },
+      stats: { show: ({ query }) => renderStats(ctx.root, query) },
     };
   }
 
   show(route) {
-    renderNavbar(this.navbar, { active: NAV_SECTION[route.name], hidden: route.name === 'game' });
-    this.root.dataset.screen = route.name;
-    this.screens[route.name](route);
-    this.root.scrollTop = 0;
+    this.current?.leave?.();
+    closeAllModals();
+    renderNavbar(this.ctx.navbar, { active: NAV_SECTION[route.name], hidden: route.name === 'game' });
+    this.ctx.root.dataset.screen = route.name;
+    this.ctx.root.scrollTop = 0;
+    this.current = this.controllers[route.name];
+    this.current.show(route);
   }
 }

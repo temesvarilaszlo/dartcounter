@@ -32,3 +32,526 @@
 .empty-state {
   color: var(--text-muted);
 }
+
+/* Menu */
+.menu {
+  gap: var(--space-6);
+}
+
+.menu__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.menu__mark svg {
+  display: block;
+  width: 44px;
+  height: 44px;
+}
+
+.menu__heading {
+  margin-bottom: calc(-1 * var(--space-3));
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.menu__types {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.type-card {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 5.5rem;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--board-line);
+  border-radius: var(--radius-md);
+  background: var(--board-ink);
+  color: inherit;
+  text-decoration: none;
+}
+
+.type-card:active {
+  border-color: var(--board-wire);
+}
+
+.type-card__glyph {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  line-height: 1;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.type-card__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.type-card__label {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.type-card__description {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.resume {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 6px);
+  border: 1px solid var(--board-wire);
+  border-radius: var(--radius-md);
+  background: var(--board-ink);
+  overflow: hidden;
+}
+
+.resume::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: var(--ring-strip-vertical);
+}
+
+.resume__title {
+  font-size: var(--text-lg);
+}
+
+.resume__config,
+.resume__progress {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.resume__players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+
+.resume__players li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.resume__score {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.resume__actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.resume__actions .btn--primary {
+  flex: 1;
+}
+
+/* Pre-game */
+.pregame {
+  padding-bottom: 0;
+}
+
+.pregame__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.back-link {
+  align-self: flex-start;
+  min-height: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  margin: calc(-1 * var(--space-3)) 0 0;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.pregame__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  max-width: 40rem;
+}
+
+.pregame__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.pregame__heading {
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--board-line);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+}
+
+.format {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+}
+
+.player-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.player-row {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  grid-template-areas:
+    'order input'
+    '. meta';
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.player-row__order {
+  grid-area: order;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+
+.player-row__meta {
+  grid-area: meta;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+}
+
+.player-row__notes {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-row__input {
+  grid-area: input;
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--board-line);
+  border-radius: var(--radius-sm);
+  background: var(--board-ink);
+  color: var(--board-white);
+  font: inherit;
+  font-size: var(--text-lg);
+}
+
+.player-row__input:focus-visible {
+  outline-offset: 0;
+}
+
+.player-row[data-first] .player-row__input {
+  border-color: var(--board-wire);
+}
+
+.player-row__first {
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.player-row__first::before {
+  content: '▶ ';
+  color: var(--board-green);
+}
+
+.player-row__error {
+  color: #ff8a8f;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.player-row__error:empty {
+  display: none;
+}
+
+.player-row__tools {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.pregame__footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 40rem;
+  margin-top: var(--space-8);
+  padding: var(--space-3) 0 var(--space-4);
+  background: linear-gradient(transparent, var(--board-black) var(--space-4));
+}
+
+.pregame__hint {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.pregame__hint:empty {
+  display: none;
+}
+
+/* Game: header, scoreboard, input panel; never scrolls. */
+#app[data-screen='game'] {
+  overflow: hidden;
+  padding-bottom: var(--safe-bottom);
+}
+
+.game {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+}
+
+.game__header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.game__exit {
+  padding: 0 var(--space-4);
+}
+
+.game__titles {
+  min-width: 0;
+  text-align: right;
+}
+
+.game__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: 1.1;
+}
+
+.game__progress {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0 var(--space-2);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.game__target {
+  color: var(--text-muted);
+}
+
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.seat {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'head head'
+    'score stats'
+    'note note';
+  align-items: end;
+  gap: 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--board-line);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  overflow: hidden;
+}
+
+.seat__head {
+  grid-area: head;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.seat__name {
+  overflow: hidden;
+  color: var(--board-white);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.seat__won {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.seat__score {
+  grid-area: score;
+  color: var(--board-white);
+  font-family: var(--font-display);
+  font-size: var(--text-score-small);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.seat__note {
+  grid-area: note;
+  font-size: var(--text-sm);
+}
+
+.seat__stats {
+  grid-area: stats;
+  display: flex;
+  gap: var(--space-3);
+  padding-bottom: 0.2em;
+  font-size: var(--text-sm);
+}
+
+.seat__stats div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.seat__stats dt {
+  font-size: 0.75rem;
+}
+
+.seat__stats dd {
+  margin: 0;
+  color: var(--board-white);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+/* The one loud element: whoever throws gets the ring strip and the big number. */
+.seat[data-active] {
+  flex: 1;
+  min-height: 0;
+  container-type: size;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto auto;
+  grid-template-areas:
+    'head'
+    'score'
+    'note'
+    'stats';
+  align-items: center;
+  padding-left: calc(var(--space-3) + 8px);
+  border-color: var(--board-wire);
+  background: var(--board-ink);
+}
+
+.seat[data-active]::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 8px;
+  background: var(--ring-strip-vertical);
+}
+
+/* Sized against the panel's own height so it never clips on short screens. */
+.seat[data-active] .seat__score {
+  font-size: min(var(--text-score), 46cqh);
+  letter-spacing: -0.01em;
+}
+
+.seat[data-active] .seat__stats {
+  justify-content: space-between;
+}
+
+.seat[data-active] .seat__stats div {
+  align-items: flex-start;
+}
+
+.seat__marker {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--board-white);
+  color: var(--board-black);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.input-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.input-panel .entry__error {
+  min-height: 1.3em;
+  line-height: 1.3;
+}
+
+.btn--undo {
+  min-height: var(--key-height);
+  padding: 0 var(--space-4);
+  border-color: var(--board-red);
+  background: transparent;
+}
+
+/* Short screens: stats sit beside the big number instead of under it. */
+@media (max-height: 600px) {
+  .seat[data-active] {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      'head head'
+      'score stats'
+      'note note';
+  }
+
+  .seat[data-active] .seat__score {
+    font-size: min(var(--text-score), 62cqh);
+  }
+
+  .seat[data-active] .seat__stats {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .seat[data-active] .seat__stats div {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: var(--space-2);
+  }
+}
