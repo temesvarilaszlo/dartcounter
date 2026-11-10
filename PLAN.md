@@ -653,6 +653,7 @@ Each milestone ends with `pnpm test` green (run in the container); milestones 1-
 16. **Time:** stored in UTC; displayed, filtered and named (export file) in local time.
 17. **Undo from a freshly started leg** (X01 and cricket) discards the empty leg and removes the previous leg's winning input in one tap (2026-11-09).
 18. **Cricket undo is dart by dart:** once the pending turn is empty, undo reopens the previous turn minus its last dart, including misses filled in by "Next player" (2026-11-10).
+19. **Cricket marks (MPR, total marks):** only marks that close a number or score points count; marks on a dead number do not (2026-11-10).
 
 Anything not covered here or elsewhere in this plan: ask the user.
 
