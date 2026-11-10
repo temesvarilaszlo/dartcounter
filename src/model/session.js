@@ -69,15 +69,43 @@ export class GameSession {
     return this.#refresh();
   }
 
-  // Pops the most recent turn. An empty trailing leg is discarded first, so
-  // undo from a freshly started leg reopens the previous one. Returns false
-  // when there is nothing to undo.
+  // Dart-by-dart input (cricket): the turn stays pending until it is complete.
+  addDart(dart) {
+    ({ legs: this.legs, pendingTurn: this.pendingTurn } = this.#typeMethod('applyDart')(
+      this.config, this.legs, this.pendingTurn, dart,
+    ));
+    return this.#refresh();
+  }
+
+  endTurn() {
+    this.legs = this.#typeMethod('endTurn')(this.config, this.legs, this.pendingTurn);
+    this.pendingTurn = null;
+    return this.#refresh();
+  }
+
+  #typeMethod(name) {
+    if (!this.type[name]) throw new Error(`${this.type.label} has no ${name}`);
+    return this.type[name];
+  }
+
+  // Steps back one input: a pending dart first, otherwise the most recent
+  // turn. An empty trailing leg is discarded first, so undo from a freshly
+  // started leg reopens the previous one. Game types with dart input reopen
+  // the removed turn minus its last dart (reopenTurn). Returns false when
+  // there is nothing to undo.
   undo() {
+    if (this.pendingTurn) {
+      const darts = this.pendingTurn.darts.slice(0, -1);
+      this.pendingTurn = darts.length ? { ...this.pendingTurn, darts } : null;
+      this.#refresh();
+      return true;
+    }
     let legs = this.legs;
     if (legs.at(-1).turns.length === 0 && legs.length > 1) legs = legs.slice(0, -1);
     const leg = legs.at(-1);
     if (leg.turns.length === 0) return false;
     this.legs = [...legs.slice(0, -1), { ...leg, turns: leg.turns.slice(0, -1), winnerIndex: null }];
+    this.pendingTurn = this.type.reopenTurn?.(leg.turns.at(-1)) ?? null;
     this.#refresh();
     return true;
   }

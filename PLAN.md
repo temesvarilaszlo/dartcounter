@@ -651,6 +651,8 @@ Each milestone ends with `pnpm test` green (run in the container); milestones 1-
 14. **Solo games:** counted in all stats and games played, not in games won (7.4).
 15. **Display font:** Barlow Condensed Bold, self-hosted, OFL licence committed.
 16. **Time:** stored in UTC; displayed, filtered and named (export file) in local time.
+17. **Undo from a freshly started leg** (X01 and cricket) discards the empty leg and removes the previous leg's winning input in one tap (2026-11-09).
+18. **Cricket undo is dart by dart:** once the pending turn is empty, undo reopens the previous turn minus its last dart, including misses filled in by "Next player" (2026-11-10).
 
 Anything not covered here or elsewhere in this plan: ask the user.
 
