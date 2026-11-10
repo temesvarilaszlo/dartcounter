@@ -1,7 +1,7 @@
 import { renderGame } from '../views/screens/gameView.js';
 import { openModal } from '../views/components/modal.js';
 import { showToast } from '../views/components/toast.js';
-import { formatDecimal, plural } from '../views/format.js';
+import { plural } from '../views/format.js';
 import { CORRUPT_GAME_MESSAGE } from './menuController.js';
 import { progressText, targetText, wonText } from './gameModels.js';
 
@@ -26,6 +26,7 @@ export class GameController {
     }
     this.parts = this.ctx.viewParts[this.ctx.activeGame.typeId];
     this.entry = '';
+    this.multiplier = 1;
     this.render();
     document.addEventListener('keydown', this.onKey);
     if (this.session.state.phase !== 'playing') this.showLegSummary();
@@ -39,18 +40,18 @@ export class GameController {
     const { session } = this;
     const { state } = session;
     const rows = session.type.scoreboard(state);
-    const inRule = session.config.typeConfig.inRule;
     return {
-      title: session.type.describeConfig(session.config),
+      title: this.parts.title(session.type, session.config),
       progress: progressText(state),
       target: targetText(session.config),
-      canUndo: session.legs.some((leg) => leg.turns.length > 0),
+      canUndo: Boolean(session.pendingTurn) || session.legs.some((leg) => leg.turns.length > 0),
+      multiplier: this.multiplier,
+      board: session.type.board?.(state),
       seats: this.ctx.activeGame.players.map((player, seat) => ({
         name: player.name,
         active: seat === state.currentPlayerIndex,
         row: rows[seat],
         won: wonText(state, seat),
-        notIn: inRule === 'double' && !rows[seat].isIn,
       })),
     };
   }
@@ -60,10 +61,17 @@ export class GameController {
       onDigit: (digit) => this.setEntry(this.entry.length < MAX_DIGITS ? this.entry + digit : this.entry),
       onBackspace: () => this.setEntry(this.entry.slice(0, -1)),
       onOk: () => this.submitEntry(),
+      onMultiplier: (m) => {
+        this.multiplier = m;
+        this.render();
+      },
+      onDart: (n) => this.throwDart({ n, m: this.multiplier }),
+      onMiss: () => this.throwDart({ miss: true }),
+      onNextPlayer: () => this.change(() => this.session.endTurn()),
       onUndo: () => this.undo(),
       onExit: () => this.confirmExit(),
     });
-    this.view.setEntry({ text: this.entry });
+    this.view.setEntry?.({ text: this.entry });
   }
 
   // A key press clears the previous error.
@@ -73,7 +81,8 @@ export class GameController {
   }
 
   handleKey(event) {
-    if (document.querySelector('dialog[open]') || this.session?.state.phase !== 'playing') return;
+    if (this.session?.type.inputMode !== 'numpad') return;
+    if (document.querySelector('dialog[open]') || this.session.state.phase !== 'playing') return;
     if (/^\d$/.test(event.key)) this.setEntry(this.entry.length < MAX_DIGITS ? this.entry + event.key : this.entry);
     else if (event.key === 'Backspace') this.setEntry(this.entry.slice(0, -1));
     else if (event.key === 'Enter') this.submitEntry();
@@ -107,7 +116,19 @@ export class GameController {
   }
 
   commit(turn) {
-    this.session.submitTurn(turn);
+    this.change(() => this.session.submitTurn(turn));
+  }
+
+  // The multiplier springs back to single after every dart.
+  throwDart(dart) {
+    this.multiplier = 1;
+    this.change(() => this.session.addDart(dart));
+  }
+
+  // Applies a scoring action; a finished leg brings up the summary.
+  change(action) {
+    if (this.session.state.phase !== 'playing') return;
+    action();
     this.afterChange();
     if (this.session.state.phase !== 'playing') this.showLegSummary();
   }
@@ -138,7 +159,7 @@ export class GameController {
       className: 'modal--summary',
       body: [
         progressText(state),
-        `Leg: ${plural(row.darts, 'dart')}, 3-dart avg ${formatDecimal(row.average)}`,
+        `Leg: ${this.parts.legSummary(row)}`,
       ],
       actions: [
         { label: 'Undo', variant: 'danger', onClick: () => this.undo() },

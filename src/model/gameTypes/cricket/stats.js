@@ -1,5 +1,6 @@
 import { pooledAverage, sum } from '../../common/statsMath.js';
 import { replayLeg } from './replay.js';
+import { MARKS_TO_CLOSE, NUMBERS } from './rules.js';
 
 // MPR is pooled like the X01 average: counting marks / darts x 3.
 const mpr = (marks, darts) => pooledAverage(marks, darts);
@@ -65,3 +66,23 @@ export const allTime = {
   ],
   compute: allTimeStats,
 };
+
+// Live per-seat numbers for the game screen (current leg, pending darts included).
+export function scoreboard(state) {
+  return state.leg.players.map((p) => ({
+    marks: { ...p.marks },
+    points: p.points,
+    darts: p.darts,
+    mpr: mpr(p.countingMarks, p.darts),
+  }));
+}
+
+// Board-wide view: which numbers are dead (closed by everyone) and the darts
+// of the turn in progress.
+export function board(state) {
+  const players = state.leg.players;
+  return {
+    numbers: NUMBERS.map((n) => ({ n, dead: players.every((p) => p.marks[n] >= MARKS_TO_CLOSE) })),
+    pendingDarts: state.leg.pendingDarts,
+  };
+}

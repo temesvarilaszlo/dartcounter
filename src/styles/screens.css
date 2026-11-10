@@ -555,3 +555,235 @@
     gap: var(--space-2);
   }
 }
+
+/* Cricket scoreboard: marks | number | marks, rows share the height left over. */
+.cricket {
+  display: grid;
+  grid-template-rows: auto repeat(7, minmax(0, 1fr));
+  min-height: 0;
+  border: 1px solid var(--board-line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.cricket__row {
+  display: grid;
+  grid-template-columns: var(--columns);
+  min-height: 0;
+}
+
+.cricket__row + .cricket__row {
+  border-top: 1px solid var(--board-line);
+}
+
+.cricket__head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: var(--space-2) var(--space-2) var(--space-1);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.cricket__head[data-active] {
+  background: var(--board-ink);
+}
+
+/* Kept in both columns so the points line up. */
+.cricket__head .seat__marker[data-hidden] {
+  visibility: hidden;
+}
+
+.cricket__head[data-active]::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--ring-strip);
+}
+
+.cricket__name {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--board-white);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cricket__points {
+  color: var(--board-white);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7dvh, 3.75rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.cricket__meta {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cricket__marks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cricket__marks[data-active] {
+  background: var(--board-ink);
+}
+
+.cricket__number {
+  display: grid;
+  place-items: center;
+  border-inline: 1px solid var(--board-line);
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 3.6dvh, 1.75rem);
+  line-height: 1;
+}
+
+.cricket__number:first-child {
+  border-left: 0;
+}
+
+.cricket__number[data-dead] {
+  color: var(--text-muted);
+  text-decoration: line-through 2px;
+}
+
+.cricket__row[data-dead] .tally {
+  opacity: 0.4;
+}
+
+/* Sized from the viewport: the rows share leftover height, so % would not resolve. */
+.tally {
+  display: block;
+  width: min(2.25rem, 3.3dvh);
+  height: min(2.25rem, 3.3dvh);
+}
+
+.tally svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--board-white);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.type-card__tally {
+  width: 3.25rem;
+  height: 3.25rem;
+  fill: none;
+  stroke: var(--board-white);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+/* Dart pad */
+.input-panel--darts {
+  gap: var(--space-2);
+}
+
+.turn {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.turn .btn--undo {
+  min-height: calc(var(--key-height) * 0.85);
+}
+
+.turn__darts {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-1);
+  padding: 0;
+  list-style: none;
+}
+
+.turn__dart {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--board-wire);
+  border-radius: var(--radius-sm);
+  background: var(--board-ink);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.turn__dart[data-empty] {
+  border-style: dashed;
+  border-color: var(--board-line);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: var(--key-height);
+  grid-template-rows: calc(var(--key-height) * 0.8);
+  gap: 1px;
+  border: 1px solid var(--board-wire);
+  border-radius: var(--radius-sm);
+  background: var(--board-wire);
+  overflow: hidden;
+}
+
+.pad__key {
+  border: 0;
+  background: var(--board-black);
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4dvh, 2rem);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.pad__key:active {
+  background: var(--board-line);
+}
+
+.pad__key:disabled {
+  color: var(--board-line);
+  cursor: not-allowed;
+}
+
+.pad__key--multiplier {
+  background: var(--board-ink);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+}
+
+/* The chosen multiplier is inverted (cream on black flips), not just tinted. */
+.pad__key--multiplier[aria-pressed='true'] {
+  background: var(--board-white);
+  color: var(--board-black);
+  font-weight: 700;
+}
+
+.pad__key--miss,
+.pad__key--next {
+  font-family: var(--font-ui);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.pad__key--next {
+  background: var(--board-green);
+}
+
+.pad__key--next:active {
+  background: #0b6230;
+}

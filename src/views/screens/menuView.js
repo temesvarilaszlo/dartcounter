@@ -27,7 +27,7 @@ export function renderMenu(root, { resume, types }, handlers) {
       el('ul', { class: 'menu__types' },
         types.map((type) => el('li', {},
           el('a', { class: 'type-card', href: `#/new/${type.id}` },
-            el('span', { class: 'type-card__glyph', 'aria-hidden': 'true' }, type.glyph),
+            el('span', { class: 'type-card__glyph', 'aria-hidden': 'true', html: type.glyphHtml ?? null }, type.glyphHtml ? null : type.glyph),
             el('span', { class: 'type-card__text' },
               el('span', { class: 'type-card__label' }, type.label),
               el('span', { class: 'type-card__description' }, type.description))))))),

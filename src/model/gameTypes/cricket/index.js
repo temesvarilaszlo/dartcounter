@@ -1,6 +1,6 @@
 import { describeConfig, filterFields, normalizeConfig, preGameSchema, validateConfig } from './config.js';
 import { applyDart, applyTurn, endTurn, evaluateInput, reopenTurn, replay } from './replay.js';
-import { allTime, gameStats, gameStatsRows, legStats } from './stats.js';
+import { allTime, board, gameStats, gameStatsRows, legStats, scoreboard } from './stats.js';
 
 export const cricket = {
   id: 'cricket',
@@ -22,4 +22,6 @@ export const cricket = {
   gameStatsRows,
   allTime,
   filterFields,
+  scoreboard,
+  board,
 };

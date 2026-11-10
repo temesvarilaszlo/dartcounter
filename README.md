@@ -2,7 +2,7 @@
 
 A personal, mobile-first dart scorer for X01 and Cricket. It runs as an installable, offline-capable PWA on Android Chrome. Vanilla JavaScript (ES modules), no build step, no runtime dependencies. See [PLAN.md](PLAN.md) for the full design.
 
-**Status:** milestones 0-5 done: app shell, routing, service worker, icons; model core (match format, players, registry, `GameSession`), the X01 and Cricket models, and persistence (IndexedDB repositories with in-memory fakes, localStorage mirror of the game in progress and last used setup, JSON backup export/import with merge), the stats service (all-time stats per player and game type, game history filters), and the playable X01 UI: main menu with resume, pre-game setup (players, sets/legs, start score, in/out rules, prefilled from the last game) and the game screen (keypad, checkout darts, leg summary with undo, exit warning). Cricket appears in the menu once its UI lands (milestone 6).
+**Status:** milestones 0-6 done: app shell, routing, service worker, icons; model core (match format, players, registry, `GameSession`), the X01 and Cricket models, and persistence (IndexedDB repositories with in-memory fakes, localStorage mirror of the game in progress and last used setup, JSON backup export/import with merge), the stats service (all-time stats per player and game type, game history filters), and the playable X01 and Cricket UIs: main menu with resume, pre-game setup (players, sets/legs, start score, in/out rules, prefilled from the last game) and the game screen (X01: keypad, checkout darts; Cricket: dart pad and tally scoreboard, regular and cut-throat; both: leg summary with undo, exit warning).
 
 ## Development
 

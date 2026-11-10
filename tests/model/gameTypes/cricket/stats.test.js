@@ -45,3 +45,23 @@ test('summary of no legs and the detail rows', () => {
   assert.deepEqual(summarizeLegs([]), { darts: 0, marks: 0, points: 0, mpr: null, legsWon: 0 });
   assert.deepEqual(gameStatsRows.map((r) => r.label), ['MPR', 'Total marks', 'Total points']);
 });
+
+test('scoreboard and board: live marks, points, MPR, dead numbers and pending darts', async () => {
+  const { scoreboard, board } = await import('../../../../src/model/gameTypes/cricket/stats.js');
+  const { newCricketSession, throwTurns, dart } = await import('../../../fixtures/cricket.js');
+  const session = newCricketSession();
+  throwTurns(session, ['T20 S20 M', 'T20 D19']);
+  session.addDart(dart('S20'));
+  const [a, b] = scoreboard(session.state);
+  assert.equal(a.marks[20], 3);
+  assert.equal(a.points, 20);
+  assert.equal(a.darts, 4, 'the pending dart counts');
+  assert.equal(a.mpr, 3, 'the pending dart hit a dead 20: no mark');
+  assert.deepEqual([b.marks[20], b.marks[19], b.points, b.darts], [3, 2, 0, 3]);
+  assert.equal(b.mpr, 5);
+
+  const view = board(session.state);
+  assert.deepEqual(view.numbers.map((x) => x.n), [20, 19, 18, 17, 16, 15, 25]);
+  assert.deepEqual(view.numbers.filter((x) => x.dead).map((x) => x.n), [20]);
+  assert.deepEqual(view.pendingDarts, [{ n: 20, m: 1 }]);
+});

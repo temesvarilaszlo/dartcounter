@@ -10,7 +10,7 @@ export function renderGame(root, vm, parts, handlers) {
         el('div', { class: 'game__titles' },
           el('h1', { class: 'game__title' }, vm.title),
           el('p', { class: 'game__progress' }, vm.progress, el('span', { class: 'game__target' }, vm.target)))),
-      parts.scoreboard(vm.seats),
+      parts.scoreboard(vm.seats, vm.board),
       panel.element),
   );
   return panel;

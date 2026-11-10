@@ -24,7 +24,7 @@ export class MenuController {
     const { activeGame, registry, viewParts, root } = this.ctx;
     const types = registry.list()
       .filter((type) => viewParts[type.id])
-      .map((type) => ({ id: type.id, label: type.label, description: type.description, glyph: viewParts[type.id].glyph }));
+      .map((type) => ({ id: type.id, label: type.label, description: type.description, glyph: viewParts[type.id].glyph, glyphHtml: viewParts[type.id].glyphHtml }));
     const resume = activeGame.session ? resumeModel(activeGame, viewParts[activeGame.typeId]) : null;
     renderMenu(root, { resume, types }, {
       onResume: () => this.ctx.navigate('#/game'),
