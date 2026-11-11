@@ -19,4 +19,5 @@ See @PLAN.md for the full plan (source of truth).
   - A scenario exports `default async (t) => {}` using `t.viewport/goto/click/type/keys/eval/text/shot` (see `.e2e/cdp.mjs`, examples in `.e2e/*.mjs`). Use `?nosw=1` in URLs.
   - Screenshots land in `.e2e/shots/`; look at them, since layout bugs (overflow, clipped content) don't show up in assertions.
 - If a rule or requirement is unclear, ask the user.
-- Keep `README.md` up to date; commit once per completed milestone.
+- Keep `README.md` up to date.
+- Every push to `main` deploys to GitHub Pages (`.github/workflows/deploy.yml`). Do features and fixes on a branch (`feature/<name>`, `fix/<name>`) created from `main`, and merge into `main` only when the user says so.
