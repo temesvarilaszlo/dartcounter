@@ -6,11 +6,16 @@ import { CORRUPT_GAME_MESSAGE } from './menuController.js';
 import { progressText, targetText, wonText } from './gameModels.js';
 
 const MAX_DIGITS = 3;
+const GAME_HASH = '#/game';
 
 export class GameController {
   constructor(ctx) {
     this.ctx = ctx;
     this.onKey = (event) => this.handleKey(event);
+    this.onPopState = () => this.handleBack();
+    this.onVisibility = () => {
+      if (document.visibilityState === 'visible') this.acquireWakeLock();
+    };
   }
 
   get session() {
@@ -21,7 +26,7 @@ export class GameController {
     const { status } = this.ctx.activeGame.load();
     if (status !== 'ok') {
       if (status === 'corrupt') showToast(CORRUPT_GAME_MESSAGE);
-      this.ctx.navigate('#/');
+      this.ctx.navigate('#/', { replace: true });
       return;
     }
     this.parts = this.ctx.viewParts[this.ctx.activeGame.typeId];
@@ -29,11 +34,44 @@ export class GameController {
     this.multiplier = 1;
     this.render();
     document.addEventListener('keydown', this.onKey);
+    // A sentinel entry with the same URL: the back button pops it (no
+    // hashchange), and handleBack asks before leaving.
+    if (!window.history.state?.gameGuard) window.history.pushState({ gameGuard: true }, '');
+    window.addEventListener('popstate', this.onPopState);
+    document.addEventListener('visibilitychange', this.onVisibility);
+    this.active = true;
+    this.acquireWakeLock();
     if (this.session.state.phase !== 'playing') this.showLegSummary();
   }
 
   leave() {
+    this.active = false;
     document.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('popstate', this.onPopState);
+    document.removeEventListener('visibilitychange', this.onVisibility);
+    this.wakeLock?.release().catch(() => {});
+    this.wakeLock = null;
+  }
+
+  // Chrome fires popstate for hash navigations too, so only a pop that lands
+  // on the game URL is the back button.
+  handleBack() {
+    if (window.location.hash !== GAME_HASH || window.history.state?.gameGuard) return;
+    window.history.pushState({ gameGuard: true }, '');
+    if (!document.querySelector('dialog[open]')) this.confirmExit();
+  }
+
+  // Keeps the screen on between throws. The browser drops the lock when the
+  // page is hidden, so it is taken again on return.
+  async acquireWakeLock() {
+    if (!navigator.wakeLock || (this.wakeLock && !this.wakeLock.released)) return;
+    try {
+      const lock = await navigator.wakeLock.request('screen');
+      if (this.active) this.wakeLock = lock;
+      else lock.release().catch(() => {});
+    } catch {
+      this.wakeLock = null;
+    }
   }
 
   model() {
@@ -178,7 +216,8 @@ export class GameController {
   async finish() {
     try {
       const record = await this.ctx.activeGame.finish(this.ctx.repos);
-      this.ctx.navigate(`#/games/${record.id}`);
+      this.ctx.persistStorage();
+      this.ctx.navigate(`#/games/${record.id}`, { replace: true });
     } catch (error) {
       console.error('Saving the game failed', error);
       showToast("Couldn't save the game. Try again.");
@@ -197,7 +236,7 @@ export class GameController {
           variant: 'danger',
           onClick: () => {
             this.ctx.activeGame.discard();
-            this.ctx.navigate('#/');
+            this.ctx.navigate('#/', { replace: true });
           },
         },
       ],

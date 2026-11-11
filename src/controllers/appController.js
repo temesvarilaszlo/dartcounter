@@ -8,7 +8,7 @@ import { StatsController } from './statsController.js';
 
 const NAV_SECTION = { menu: 'menu', preGame: 'menu', game: 'menu', gameDetail: 'stats', stats: 'stats' };
 
-// ctx: { root, navbar, registry, viewParts, repos, activeGame, lastConfig, navigate }
+// ctx: { root, navbar, registry, viewParts, repos, activeGame, lastConfig, navigate, persistStorage }
 export class AppController {
   constructor(ctx) {
     this.ctx = ctx;

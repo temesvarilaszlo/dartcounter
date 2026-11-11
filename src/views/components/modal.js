@@ -17,7 +17,9 @@ export function openModal({ title, body = [], actions = [], dismissible = true, 
         onClick: () => { close(); action.onClick?.(); },
       }, action.label))));
 
+  let closing = false;
   function close() {
+    closing = true;
     if (dialog.open) dialog.close();
     dialog.remove();
   }
@@ -28,6 +30,18 @@ export function openModal({ title, body = [], actions = [], dismissible = true, 
     close();
     onDismiss?.();
   });
+  // Android's back button may close the dialog without a cancelable "cancel"
+  // (Chrome ignores preventDefault without a recent tap), so a modal that must
+  // stay open is reopened instead of leaving the screen stuck behind it.
+  dialog.addEventListener('close', () => {
+    if (closing || !dialog.isConnected) return;
+    if (!dismissible) {
+      dialog.showModal();
+      return;
+    }
+    close();
+    onDismiss?.();
+  });
   document.body.append(dialog);
   dialog.showModal();
   return { dialog, close };
@@ -35,7 +49,7 @@ export function openModal({ title, body = [], actions = [], dismissible = true, 
 
 export function closeAllModals() {
   document.querySelectorAll('dialog.modal').forEach((dialog) => {
-    if (dialog.open) dialog.close();
     dialog.remove();
+    if (dialog.open) dialog.close();
   });
 }

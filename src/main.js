@@ -34,6 +34,16 @@ async function openRepositories() {
   }
 }
 
+// Asks the browser not to evict IndexedDB under storage pressure. Chrome grants
+// it based on engagement, so it is asked again after every saved game until granted.
+async function persistStorage() {
+  try {
+    if (navigator.storage?.persist && !(await navigator.storage.persisted())) await navigator.storage.persist();
+  } catch (error) {
+    console.error('Persistent storage request failed', error);
+  }
+}
+
 const registry = createRegistry().register(x01).register(cricket);
 const ctx = {
   root: document.getElementById('app'),
@@ -43,13 +53,17 @@ const ctx = {
   repos: await openRepositories(),
   activeGame: createActiveGame({ store: createActiveGameStore(localStorage), registry }),
   lastConfig: createLastConfigStore(localStorage),
-  navigate: (hash) => {
+  // replace: leave the current entry out of the back stack (used when leaving a game).
+  navigate: (hash, { replace = false } = {}) => {
     if (window.location.hash === hash) router.resolve();
+    else if (replace) window.location.replace(hash);
     else window.location.hash = hash;
   },
+  persistStorage,
 };
 const app = new AppController(ctx);
 const router = new Router(ROUTES, (route) => app.show(route));
 router.start();
 
+persistStorage();
 setupServiceWorker().catch((error) => console.error('Service worker setup failed', error));
