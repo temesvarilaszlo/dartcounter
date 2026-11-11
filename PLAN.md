@@ -622,7 +622,7 @@ Each milestone ends with `pnpm test` green (run in the container); milestones 1-
 5. **Main menu, pre-game, X01 game screen** (keypad, scoreboard, checkout modal, leg summary with undo, exit warning, mirror and resume). *Accept:* a full 501 double-out game, a sets game and a straight-in/straight-out game can be played; reload mid-game resumes; exit wipes the mirror.
 6. **Cricket UI.** dart pad, tally scoreboard, both variants. *Accept:* a regular and a cut-throat game can be played end to end.
 7. **Game detail, Statistics, history, filters, delete, export/import.** *Accept:* finished games appear in history and all-time stats; delete updates both; export then import round-trips.
-8. **Hardening and polish.** wake lock, storage persist, Android back handling, accessibility pass, 320-px-wide and 412-px-wide layout pass, offline test on the phone. *Accept:* manual checklist below.
+8. **Hardening and polish.** storage persist, Android back handling, accessibility pass, 320-px-wide and 412-px-wide layout pass, offline test on the phone. *Accept:* manual checklist below.
 9. **Deploy.** Public GitHub repo, `.github/workflows/deploy.yml` (2.10), Pages enabled. *Accept:* push to `main` runs tests + coverage, generates precache and deploys; the Pages URL installs as a PWA and works offline; data exported from the tunnel build imports cleanly.
 
 ### Manual device checklist (Android Chrome, installed PWA)
