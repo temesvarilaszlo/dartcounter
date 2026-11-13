@@ -21,3 +21,24 @@ See @PLAN.md for the full plan (source of truth).
 - If a rule or requirement is unclear, ask the user.
 - Keep `README.md` up to date.
 - Every push to `main` deploys to GitHub Pages (`.github/workflows/deploy.yml`). Do features and fixes on a branch (`feature/<name>`, `fix/<name>`) created from `main`, and merge into `main` only when the user says so.
+
+## Working on changes
+
+- One change per session and per branch (`fix/<topic>`, `feat/<topic>`). Don't mix unrelated changes.
+- Bug fixes: first write a failing test that reproduces the bug, then fix it, then confirm the test passes.
+- New features: plan first. Read @PLAN.md and the relevant code, propose an approach with acceptance criteria, and wait for approval before implementing.
+- If a requirement or game rule is unclear, ask instead of guessing.
+- Keep @PLAN.md current: if behaviour, rules, screens or the data model change, update it in the same branch.
+
+## Data safety
+
+- Any change to the shape of a stored record (games, players, active-game mirror, export file) requires: a `schemaVersion` bump, a migration in `src/model/persistence/idb.js`, a test that migrates a fixture of the old format, and export/import support for both versions.
+- Never change or delete existing stored fields without a migration.
+- Remind me to export a JSON backup before I run a migration on my real data.
+
+## Definition of done
+
+- `npm run test:coverage` passes (model coverage stays at or above 90%).
+- New rules, stats and persistence changes have tests.
+- `PLAN.md` is updated if behaviour changed.
+- Summarise what changed in one or two sentences, and list anything I need to verify by hand.
