@@ -790,7 +790,6 @@
 
 .detail {
   gap: var(--space-6);
-  padding-bottom: 0;
 }
 
 .detail__header {
