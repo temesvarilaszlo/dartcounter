@@ -101,11 +101,25 @@ test('scoreboard: live per-seat numbers of the current leg', async () => {
   const session = newX01Session({ inRule: 'double' });
   play(session, [0, 60]);
   assert.deepEqual(scoreboard(session.state), [
-    { remaining: 501, isIn: false, darts: 3, average: 0, matchAverage: 0, lastScore: 0 },
-    { remaining: 441, isIn: true, darts: 3, average: 60, matchAverage: 60, lastScore: 60 },
+    { remaining: 501, isIn: false, darts: 3, average: 0, matchAverage: 0, lastScore: 0, checkout: null },
+    { remaining: 441, isIn: true, darts: 3, average: 60, matchAverage: 60, lastScore: 60, checkout: null },
   ]);
   play(session, [100]);
   assert.equal(scoreboard(session.state)[0].lastScore, 100);
+});
+
+test('scoreboard: checkout route follows the in and out rules', async () => {
+  const { scoreboard } = await import('../../../../src/model/gameTypes/x01/stats.js');
+  const { newX01Session, play } = await import('../../../fixtures/x01.js');
+  const doubleOut = newX01Session({ startScore: 101 });
+  assert.deepEqual(scoreboard(doubleOut.state).map((r) => r.checkout), [['T20', '9', 'D16'], ['T20', '9', 'D16']]);
+  play(doubleOut, [41]);
+  assert.deepEqual(scoreboard(doubleOut.state)[0].checkout, ['20', 'D20']);
+  const straightOut = newX01Session({ startScore: 101, outRule: 'straight' });
+  play(straightOut, [41]);
+  assert.deepEqual(scoreboard(straightOut.state)[0].checkout, ['T20']);
+  const doubleIn = newX01Session({ startScore: 101, inRule: 'double' });
+  assert.deepEqual(scoreboard(doubleIn.state)[0].checkout, ['Bull', '19', 'D16']);
 });
 
 test('scoreboard: match average pools every leg played so far', async () => {

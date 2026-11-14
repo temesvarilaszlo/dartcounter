@@ -19,6 +19,17 @@ const stats = (row) => [
   { label: 'Last', value: formatInteger(row.lastScore) },
 ];
 
+// The finishing dart is the last chip; its label (D, Bull) names it, the ring only echoes it.
+const checkoutRoute = (route) => el('ol', { class: 'route', 'aria-label': `Checkout: ${route.join(', ')}` },
+  route.map((dart, i) => el('li', { class: 'route__dart', 'data-finish': i === route.length - 1 ? '' : null }, dart)));
+
+// The active player gets the route on its own line; the others keep it in the
+// name row so the compact seats don't grow and squeeze the active panel.
+function note(seat) {
+  if (!seat.row.isIn && !seat.row.checkout) return el('p', { class: 'seat__note' }, 'Needs a double to start');
+  return seat.active && seat.row.checkout ? el('div', { class: 'seat__note' }, checkoutRoute(seat.row.checkout)) : null;
+}
+
 // seats: [{ name, active, row, won }] in throw order; `row` comes from type.scoreboard.
 export function scoreboard(seats) {
   return el('ol', { class: 'scoreboard', 'data-seats': String(seats.length) },
@@ -26,9 +37,10 @@ export function scoreboard(seats) {
       el('div', { class: 'seat__head' },
         el('span', { class: 'seat__name' }, seat.name),
         seat.active ? el('span', { class: 'seat__marker' }, 'To throw') : null,
+        !seat.active && seat.row.checkout ? checkoutRoute(seat.row.checkout) : null,
         el('span', { class: 'seat__won' }, seat.won)),
       el('div', { class: 'seat__score', 'aria-label': `${seat.name}: ${seat.row.remaining} left` }, String(seat.row.remaining)),
-      !seat.row.isIn ? el('p', { class: 'seat__note' }, 'Needs a double to start') : null,
+      note(seat),
       el('dl', { class: 'seat__stats' },
         stats(seat.row).map((s) => el('div', {}, el('dt', {}, s.label), el('dd', {}, s.value)))))));
 }

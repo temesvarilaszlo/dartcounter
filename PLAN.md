@@ -400,6 +400,10 @@ Error messages must be specific and human: "Max score is 180", "163 can't be sco
 - If `minDarts == 3`, do **not** show the modal; record 3 darts. Otherwise show buttons for `minDarts..3`.
 - Examples to unit-test: double-out 2->1, 40->1, 50->1, 3->2, 41->2, 100->2, 110->2, 99->3, 170->3, 159 not finishable. Straight-out: 60->1, 61->2, 180->3, 21->1.
 
+**Checkout route suggestion** (`checkoutRoute` in `checkout.js`, display only, never stored):
+- **Double out** (player in): the route from DartCounter's checkout calculator ("Standard checkout", `checkoutTable.js`; their wrong 111 entry replaced by T20 19 D16). It may use more darts than the minimum (50: 18 D16, 101: T20 9 D16). Examples: 170 T20 T20 Bull, 141 T20 T19 D12, 125 T20 25 D20, 61 25 D18, 41 9 D16.
+- **Straight out, and a double-in player not yet in** (not covered by that table): brute force over the same dart set, restricted to fewest-dart routes. It ranks routes by difficulty (setup darts: single 1, treble 2, double or single bull 3, bull 4; finishing double 0 for D20, D16, D18, D12, D10, D8, otherwise 1), then the biggest setup darts. Straight out ranks every dart as a setup dart.
+
 **Darts accounting:** every non-checkout turn counts 3 darts (including `0` turns); the checkout turn counts the modal value.
 
 ### 6.3 Cricket
@@ -520,6 +524,7 @@ All screens: mobile-first, `100dvh` layout, safe-area insets respected, touch ta
 Layout (top to bottom, fixed, no page scroll):
 1. Header: Exit button, game label (for example "501 · DO"), match progress ("Sets 1-0 · Legs 2-1" when sets are on, otherwise "Legs 2-1"; first-to / best-of target shown).
 2. Scoreboard: all players visible. The **active player's** current score is rendered at the largest size (fluid font size via `clamp`), highlighted with a ring and a text marker (not colour alone); other players are compact (name, remaining, sets/legs won). Under the active score: **darts thrown in this leg, 3-dart avg in this leg, 3-dart avg of the whole match so far (pooled over all legs), last score** (X01). Inactive players show the same four stats in a compact form.
+   - **Checkout route (X01):** whenever a player's remaining score can be finished in 3 darts under the game's out rule (and, before a double-in player is in, opening on a double), one suggested route is shown as dart chips (`T20 T19 D12`, `Bull`), the finishing dart ringed. Active player: under the score; others: in the name row. See 6.2 for how the route is chosen.
 3. Input panel (bottom):
    - X01: value display (a `div`, not an input) with an error line (`role="alert"`), then a 3x4 keypad: `1-9`, backspace, `0`, OK; an Undo button sits next to the display. Max 3 digits.
    - Cricket: dart pad (see 6.3) plus a row showing the darts of the current turn, Undo and Next player.

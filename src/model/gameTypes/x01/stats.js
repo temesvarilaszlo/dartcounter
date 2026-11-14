@@ -1,4 +1,6 @@
 import { countBuckets, maxOrNull, minOrNull, pooledAverage, sum } from '../../common/statsMath.js';
+import { anyDart, checkoutRoute } from './checkout.js';
+import { IN_RULES, OUT_RULES } from './rules.js';
 
 export const SCORE_BUCKETS = [
   { key: '180', min: 180, max: 180 },
@@ -153,6 +155,7 @@ export const allTime = {
 
 // Live per-seat numbers for the game screen (current leg, plus the match average).
 export function scoreboard(state) {
+  const { inRule, outRule } = state.config.typeConfig;
   return state.leg.players.map((p, seat) => ({
     remaining: p.remaining,
     isIn: p.isIn,
@@ -163,5 +166,9 @@ export function scoreboard(state) {
       sum(state.legs.map((l) => l.players[seat].darts)),
     ),
     lastScore: p.lastScore,
+    checkout: checkoutRoute(p.remaining, {
+      first: p.isIn ? anyDart : IN_RULES[inRule].opens,
+      last: OUT_RULES[outRule].finishes,
+    }),
   }));
 }
