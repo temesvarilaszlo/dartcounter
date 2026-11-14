@@ -519,7 +519,7 @@ All screens: mobile-first, `100dvh` layout, safe-area insets respected, touch ta
 ### 9.3 Game screen
 Layout (top to bottom, fixed, no page scroll):
 1. Header: Exit button, game label (for example "501 · DO"), match progress ("Sets 1-0 · Legs 2-1" when sets are on, otherwise "Legs 2-1"; first-to / best-of target shown).
-2. Scoreboard: all players visible. The **active player's** current score is rendered at the largest size (fluid font size via `clamp`), highlighted with a ring and a text marker (not colour alone); other players are compact (name, remaining, sets/legs won). Under the active score: **darts thrown in this leg, 3-dart avg in this leg, last score**. Inactive players show the same three stats in a compact form.
+2. Scoreboard: all players visible. The **active player's** current score is rendered at the largest size (fluid font size via `clamp`), highlighted with a ring and a text marker (not colour alone); other players are compact (name, remaining, sets/legs won). Under the active score: **darts thrown in this leg, 3-dart avg in this leg, 3-dart avg of the whole match so far (pooled over all legs), last score** (X01). Inactive players show the same four stats in a compact form.
 3. Input panel (bottom):
    - X01: value display (a `div`, not an input) with an error line (`role="alert"`), then a 3x4 keypad: `1-9`, backspace, `0`, OK; an Undo button sits next to the display. Max 3 digits.
    - Cricket: dart pad (see 6.3) plus a row showing the darts of the current turn, Undo and Next player.

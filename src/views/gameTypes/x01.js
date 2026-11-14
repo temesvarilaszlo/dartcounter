@@ -14,7 +14,8 @@ export const legSummary = (row) => `${plural(row.darts, 'dart')}, 3-dart avg ${f
 
 const stats = (row) => [
   { label: 'Darts', value: formatInteger(row.darts) },
-  { label: 'Avg', value: formatDecimal(row.average) },
+  { label: 'Leg avg', value: formatDecimal(row.average) },
+  { label: 'Match avg', value: formatDecimal(row.matchAverage) },
   { label: 'Last', value: formatInteger(row.lastScore) },
 ];
 

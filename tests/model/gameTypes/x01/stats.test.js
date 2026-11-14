@@ -101,11 +101,28 @@ test('scoreboard: live per-seat numbers of the current leg', async () => {
   const session = newX01Session({ inRule: 'double' });
   play(session, [0, 60]);
   assert.deepEqual(scoreboard(session.state), [
-    { remaining: 501, isIn: false, darts: 3, average: 0, lastScore: 0 },
-    { remaining: 441, isIn: true, darts: 3, average: 60, lastScore: 60 },
+    { remaining: 501, isIn: false, darts: 3, average: 0, matchAverage: 0, lastScore: 0 },
+    { remaining: 441, isIn: true, darts: 3, average: 60, matchAverage: 60, lastScore: 60 },
   ]);
   play(session, [100]);
   assert.equal(scoreboard(session.state)[0].lastScore, 100);
+});
+
+test('scoreboard: match average pools every leg played so far', async () => {
+  const { scoreboard } = await import('../../../../src/model/gameTypes/x01/stats.js');
+  const { newX01Session, play } = await import('../../../fixtures/x01.js');
+  const session = newX01Session({ startScore: 101, legs: { mode: 'firstTo', value: 2 } });
+  // Leg 1: A 60, B 20, A 41 in 2 darts -> A 101 points / 5 darts, B 20 / 3.
+  play(session, [60, 20]);
+  session.submitTurn({ playerIndex: 0, score: 41, darts: 2 });
+  session.startNextLeg();
+  // Leg 2 (B starts): B 80, A 30.
+  play(session, [80, 30]);
+  const [a, b] = scoreboard(session.state);
+  assert.equal(a.average, 30);
+  assert.equal(a.matchAverage, (131 / 8) * 3);
+  assert.equal(b.average, 80);
+  assert.equal(b.matchAverage, 50);
 });
 
 test('legHistory: rounds of remaining and scored per player, null once the leg is over', () => {
